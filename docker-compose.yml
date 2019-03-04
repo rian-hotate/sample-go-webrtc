@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  go:
+    container_name: go
+    build: ./go
+    volumes:
+      - "./go/auth:/go/auth:z"
+      - "./go/tetoris/models:/go/src/models:z"
+      - "./go/tetoris:/go/tetoris:z"
+    tty: true
+    security_opt:
+      - seccomp:unconfined
+    ports: 
+      - "50080:80"
+    links:
+      - signaling
+
+  signaling:
+    container_name: signaling
+    build: ./signaling
+    working_dir: "/usr/src/signaling"
+    ports: 
+      - "3000:3000"
+    volumes:
+      - "./signaling/js:/usr/src/signaling:z"
+    command: node signaling.js
